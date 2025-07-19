@@ -1,4 +1,3 @@
-version: '3.8' # Docker Compose file version
 
 services:
   app:  # Flask application container
@@ -6,13 +5,8 @@ services:
     ports:
       - "8080:8080" # Map container port 8080 to host port 8080
     
-    environment:
-
-      # Pass environment variables used by the Flask app
-      - DB_HOST=db
-      - DB_NAME=delfin-db
-      - DB_USER=delfin-user
-      - DB_PASS=delfin-pass
+    env_file: # Load environment variables from .env file
+      - .env
 
     depends_on:
       - db # Wait forr the db service before starting the app
@@ -20,11 +14,13 @@ services:
   db: # PostgreSQL database service
     image: postgres:13 # Use official Postgress image
     restart: always # Restart automatically on failure
+
     environment:
       # Set environment variables for PostgreSQL / Configure initial db, user, and password
       - POSTGRES_DB=delfin-db
       - POSTGRES_USER=delfin-user
       - POSTGRES_PASSWORD=delfin-pass
+
     volumes:
       - pgdata:/var/lib/postgresql/data # Persist data in named volume
     
